@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kubernetes-dashboard
+  namespace: kubernetes-dashboard
+  annotations:
+    konghq.com/strip-path: 'true'
+    konghq.com/protocols: "https"
+    kubernetes.io/ingress.class: "kong"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: kong
+  tls:
+    - secretName: dashobard.iojas.me
+      hosts:
+        - dashboard.iojas.me
+  rules:
+  - host: dashboard.iojas.me
+    http:
+      paths:
+      - path: /
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: kubernetes-dashboard
+            port:
+              number: 80
+---

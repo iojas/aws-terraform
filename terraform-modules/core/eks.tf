@@ -67,10 +67,8 @@ resource "aws_eks_cluster" "eks-cluster" {
 
   vpc_config {
     subnet_ids          = [
-      aws_subnet.public-us-east-1a.id,
       aws_subnet.public-us-east-1b.id,
-      aws_subnet.private-us-east-1a.id,
-      aws_subnet.private-us-east-1b.id
+      aws_subnet.private-us-east-1a.id
     ]
   }
 
@@ -121,8 +119,7 @@ resource "aws_eks_node_group" "spot_node_group" {
   node_group_name = "spot-ng"
   node_role_arn   = aws_iam_role.NodeGroupRole.arn
   subnet_ids      = [
-    aws_subnet.private-us-east-1a.id,
-    aws_subnet.private-us-east-1b.id
+    aws_subnet.private-us-east-1a.id
   ]
   capacity_type = "SPOT"
   instance_types = var.spot_instance_types
@@ -175,8 +172,7 @@ resource "aws_eks_node_group" "on_demand" {
   node_group_name = "on-demand-ng"
   node_role_arn   = aws_iam_role.NodeGroupRole.arn
   subnet_ids      = [
-    aws_subnet.private-us-east-1a.id,
-    aws_subnet.private-us-east-1b.id
+    aws_subnet.public-us-east-1b.id
   ]
   capacity_type = "ON_DEMAND"
   instance_types = [var.ondemand_instance_type]
@@ -203,7 +199,7 @@ resource "aws_eks_node_group" "on_demand" {
 
   tags = merge(
     local.common_tags,
-    {"type": "private"},
+    {"type": "public"},
   )
 
   # Ensure that IAM Role permissions are created before and deleted after EKS Node Group handling.

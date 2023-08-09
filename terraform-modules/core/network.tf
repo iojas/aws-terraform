@@ -14,32 +14,15 @@ resource "aws_internet_gateway" "igw" {
 
 resource "aws_subnet" "private-us-east-1a" {
   vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.0.0/19"
+  cidr_block        = "10.0.0.0/17"
   availability_zone = "us-east-1a"
-
-  tags = local.common_tags
-}
-
-resource "aws_subnet" "private-us-east-1b" {
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.32.0/19"
-  availability_zone = "us-east-1b"
-
-  tags = local.common_tags
-}
-
-resource "aws_subnet" "public-us-east-1a" {
-  vpc_id                  = aws_vpc.main.id
-  cidr_block              = "10.0.64.0/19"
-  availability_zone       = "us-east-1a"
-  map_public_ip_on_launch = true
 
   tags = local.common_tags
 }
 
 resource "aws_subnet" "public-us-east-1b" {
   vpc_id                  = aws_vpc.main.id
-  cidr_block              = "10.0.96.0/19"
+  cidr_block              = "10.0.128.0/17"
   availability_zone       = "us-east-1b"
   map_public_ip_on_launch = true
 
@@ -58,7 +41,7 @@ resource "aws_eip" "nat" {
 
 resource "aws_nat_gateway" "nat" {
   allocation_id = aws_eip.nat.id
-  subnet_id     = aws_subnet.public-us-east-1a.id
+  subnet_id     = aws_subnet.public-us-east-1b.id
 
   tags = merge(
     local.common_tags,
@@ -127,16 +110,6 @@ resource "aws_route_table" "public" {
 resource "aws_route_table_association" "private-rt-subnet-a1" {
   route_table_id = aws_route_table.private.id
   subnet_id = aws_subnet.private-us-east-1a.id
-}
-
-resource "aws_route_table_association" "public-rt-subnet-1a" {
-  route_table_id = aws_route_table.public.id
-  subnet_id = aws_subnet.public-us-east-1a.id
-}
-
-resource "aws_route_table_association" "private-rt-subnet-1b" {
-  route_table_id = aws_route_table.private.id
-  subnet_id = aws_subnet.private-us-east-1b.id
 }
 
 resource "aws_route_table_association" "public-rt-subnet-1b" {
